@@ -6,6 +6,7 @@ from uuid import uuid4 as uuid
 
 app = FastAPI()
 
+# List for storage information
 posts = []
 
 # Post Model
@@ -44,5 +45,15 @@ def delete_post(post_id: str):
     for i, post in enumerate(posts):
         if post.id == post_id:
             posts.pop(i)
-            return {"message: Successfull deleted"}
+            return {"message: Successfully deleted"}
+    raise HTTPException(status_code=404, detail="Post Not found")
+
+@app.put('/posts/{post_id}')
+def update_post(post_id: str, update_post: Post):
+    for i, post in enumerate(posts):
+        if post.id == post_id:
+            posts[i].title = update_post.title
+            posts[i].author = update_post.author
+            posts[i].content = update_post.content
+            return {"message: Successfully updated"}
     raise HTTPException(status_code=404, detail="Post Not found")
