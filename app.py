@@ -11,12 +11,12 @@ posts = []
 
 # Post Model
 class Post(BaseModel):
-    id: Optional[str] 
+    id: Optional[str]
     title: str
     author: str
     content: Text
     created_at: datetime = datetime.now()
-    published_at: Optional[datetime]
+    published_at: Optional[datetime] = None
     published: bool = False
 
 @app.get('/')
@@ -28,7 +28,7 @@ def get_posts():
     return posts
 
 @app.post('/posts')
-def save_posts(post: Post):
+def create_post(post: Post):
     post.id = str(uuid())
     posts.append(post)
     return posts[-1]
