@@ -1,20 +1,20 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import Text, Optional
+from typing import Optional
 from datetime import datetime
 from uuid import uuid4 as uuid
 
 app = FastAPI()
 
-# List for storage information
+# List for storage posts
 posts = []
 
 # Post Model
 class Post(BaseModel):
-    id: Optional[str]
-    title: str
-    author: str
-    content: Text
+    id: Optional[str] = None
+    title: Optional[str] = None
+    author: Optional[str] = None
+    content: Optional[str] = None
     created_at: datetime = datetime.now()
     published_at: Optional[datetime] = None
     published: bool = False
@@ -52,8 +52,11 @@ def delete_post(post_id: str):
 def update_post(post_id: str, update_post: Post):
     for i, post in enumerate(posts):
         if post.id == post_id:
-            posts[i].title = update_post.title
-            posts[i].author = update_post.author
-            posts[i].content = update_post.content
+            if update_post.title is not None:
+                posts[i].title = update_post.title
+            if update_post.author is not None:
+                posts[i].author = update_post.author
+            if update_post.content is not None:
+                posts[i].content = update_post.content
             return {"message": "Successfully updated"}
     raise HTTPException(status_code=404, detail="Post Not found")
