@@ -20,8 +20,46 @@ def test_create_post():
     )
 
     response_json = response.json()
-
     assert response.status_code == 200
     assert response_json["title"] == "Test Post"
     assert response_json["author"] == "Jhon Doe"
     assert response_json["content"] == "This is a test post"
+
+def test_negative_get_post():
+    response = client.get('/posts/1')
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Post Not found"}
+
+def test_get_post():
+    response = client.post(
+        "/posts",
+        json={
+            "id": "1",
+            "title": "Test Post",
+            "author": "Jhon Doe",
+            "content": "This is a test post",
+        }
+    )
+
+    response_json = response.json()
+    post_id = response_json["id"]
+    response_one = client.get(f'/posts/{post_id}')
+    assert response_one.status_code == 200
+    assert response_json == response_one.json()
+
+def test_delete_post():
+    response = client.post(
+        "/posts",
+        json={
+            "id": "1",
+            "title": "Test Post",
+            "author": "Jhon Doe",
+            "content": "This is a test post",
+        }
+    )
+
+    response_json = response.json()
+    post_id = response_json["id"]
+    response_delete = client.post(f'/posts/{post_id}')
+    assert response_delete.status_code == 200
+    assert response_delete.json() == {"message": "Successfully deleted"}
